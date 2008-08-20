@@ -20,8 +20,8 @@ body
 
   margin-top: 5px;
   padding-left: 10px;
-  border-right: solid 1px #aaaaaa;
-  border-top: solid 1px #aaaaaa;
+  border-right: solid 5px #aaaaaa;
+  border-top: solid 5px #aaaaaa;
 }
 
 #footer
@@ -35,7 +35,7 @@ body
   padding-bottom: 5px;
   padding-left: 5px;
   color: gray;
-  border-bottom: solid 1px #aaaaaa;
+  border-bottom: solid 5px #aaaaaa;
 }
 
 /* Headings */
@@ -111,14 +111,14 @@ img
 {
   position: absolute;
   width: 10em;
-  top: -1px; 
-  right: -1px;
+  top: 50px; 
+  right: 10px;
 
   border: none;
-  border-left: solid 1px #aaaaaa;
-  border-bottom: solid 1px #aaaaaa;
-  border-top: solid 1px white;
-  border-right: solid 1px white;
+  border-left: solid 8px #aaaaaa;
+  border-bottom: solid 8px #aaaaaa;
+  border-top: solid 8px #aaaaaa;
+  border-right: solid 8px #aaaaaa;
 
   padding: 10px;
 }
