@@ -2,3 +2,4 @@
 .*.swo
 tmp
 /nbproject
+/vendor/rails/**/*.log
