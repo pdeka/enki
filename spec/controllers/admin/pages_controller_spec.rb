@@ -155,7 +155,7 @@ describe Admin::PagesController do
         'slug'  => 'my-post',
         'body'  => 'This is my post'
       }}.to_yaml
-      request.headers['HTTP_X_ENKIHASH'] = hash_request(request)
+      session[:logged_in] = true
       put :update, :id => 1, :format => 'yaml'
     end
 

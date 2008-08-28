@@ -149,7 +149,7 @@ describe Admin::PostsController do
 
     def do_put
       request.env['RAW_POST_DATA'] = {'post' => valid_post_attributes}.to_yaml
-      request.headers['HTTP_X_ENKIHASH'] = hash_request(request)
+      session[:logged_in] = true
       put :update, :id => 1, :format => 'yaml'
     end
 

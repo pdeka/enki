@@ -34,4 +34,5 @@ describe Admin::DashboardController do
       assigns[:comment_activity].should == @comment_activity
     end
   end
+  
 end
