@@ -4,4 +4,3 @@ tmp/**/*
 tmp
 /nbproject
 /vendor/rails/**/*.log
-.idea/
