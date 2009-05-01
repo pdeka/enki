@@ -1,7 +1,7 @@
 class Admin::BaseController < ApplicationController
   layout 'admin'
 
-  before_filter :require_login_or_enki_hash
+  before_filter :require_login
 
   protected
 
@@ -9,28 +9,7 @@ class Admin::BaseController < ApplicationController
     @@salt ||= Digest::SHA1.hexdigest("--#{Time.now.to_s}--" + File.open("#{RAILS_ROOT}/config/enki.yml").read + RAILS_ENV)
   end
 
-  def hash_request(request)
-    Digest::SHA1.hexdigest(request.raw_post + salt)
-  end
-
-  def require_login_or_enki_hash
-    unless session[:logged_in] 
-      return render(:text => false.to_yaml, :status => :forbidden) if params[:format] == 'yaml'
-      return redirect_to(admin_session_path)
-    end
-  end
-
   def set_content_type
     headers['Content-Type'] ||= 'text/html; charset=utf-8'
-  end
-
-  def translate_yaml(yaml)
-    ret = YAML.load(yaml)
-    raise("Invalid request: YAML must specify a hash") unless ret.is_a?(Hash)
-    ret
-  end
-
-  def translate_params  
-    params.update(translate_yaml(request.raw_post)) if params[:format] == 'yaml'
   end
 end

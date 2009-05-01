@@ -130,6 +130,21 @@ describe Post, "#minor_edit" do
   it('returns "1" by default') { Post.new.minor_edit.should == "1" }
 end
 
+describe Post, '#published?' do
+  before(:each) do
+    @post = Post.new
+  end
+  
+  it "should return false if published_at is not filled" do
+    @post.should_not be_published
+  end  
+
+  it "should return true if published_at is filled" do
+    @post.published_at = Time.now
+    @post.should be_published
+  end
+end
+
 describe Post, "#minor_edit?" do
   it('returns true when minor_edit is 1')  { Post.new(:minor_edit => "1").minor_edit?.should == true }
   it('returns false when minor_edit is 0') { Post.new(:minor_edit => "0").minor_edit?.should == false }
@@ -181,5 +196,32 @@ end
 describe Post, 'being destroyed' do
   it 'destroys all comments' do
     Post.reflect_on_association(:comments).options[:dependent].should == :destroy
+  end
+end
+
+describe Post, '.build_for_preview' do
+  before(:each) do
+    @post = Post.build_for_preview(:title => 'My Post', :body => "body", :tag_list => "ruby")
+  end
+
+  it 'returns a new post' do
+    @post.should be_new_record
+  end
+  
+  it 'generates slug' do
+    @post.slug.should_not be_nil
+  end
+
+  it 'sets date' do
+    @post.edited_at.should_not be_nil
+    @post.published_at.should_not be_nil
+  end
+  
+  it 'applies filter to body' do
+    @post.body_html.should == '<p>body</p>'
+  end
+
+  it 'generates tags from tag_list' do
+    @post.tags.collect {|tag| tag.name}.should == ['ruby']
   end
 end

@@ -22,24 +22,6 @@ describe Admin::PostsController do
     end
   end
 
-  describe 'handling GET to index, YAML request' do
-    before(:each) do
-      @posts = [mock_model(Post), mock_model(Post)]
-      @posts.each {|post| post.stub!(:to_serializable) }
-      Post.stub!(:find).and_return(@posts)
-      session[:logged_in] = true
-      get :index, :format => 'yaml'
-    end
-
-    it "is successful" do
-      response.should be_success
-    end
-
-    it "renders posts with out pagination as YAML" do
-      pending("Figure out how to test this")
-    end
-  end
-
   describe 'handling GET to show' do
     before(:each) do
       @post = mock_model(Post)
@@ -61,23 +43,6 @@ describe Admin::PostsController do
     end
   end
   
-  describe 'handling GET to show, YAML format' do
-    before(:each) do
-      @post = mock_model(Post)
-      Post.stub!(:find).and_return(@post)
-      session[:logged_in] = true
-      get :show, :id => 1, :format => 'yaml'
-    end
-
-    it "is successful" do
-      response.should be_success
-    end
-
-    it "renders post as YAML" do
-      pending("Figure out how test this")
-    end
-  end
-
   describe 'handling GET to new' do
     before(:each) do
       @post = mock_model(Post)
@@ -136,50 +101,7 @@ describe Admin::PostsController do
 
     it 'is unprocessable' do
       do_put
-      response.headers['Status'].should == '422 Unprocessable Entity'
-    end
-  end
-
-  describe 'handling PUT to update with valid attributes, YAML request' do
-    before(:each) do
-      @post = mock_model(Post)
-      @post.stub!(:update_attributes).and_return(true)
-      Post.stub!(:find).and_return(@post)
-    end
-
-    def do_put
-      request.env['RAW_POST_DATA'] = {'post' => valid_post_attributes}.to_yaml
-      session[:logged_in] = true
-      put :update, :id => 1, :format => 'yaml'
-    end
-
-    it 'updates the post' do
-      @post.should_receive(:update_attributes).with(valid_post_attributes)
-      do_put
-    end
-    
-    it 'is successful' do
-      do_put
-      response.should be_success
-    end
-  end
-
-  describe 'handling PUT to update with invalid attributes, YAML request' do
-    before(:each) do
-      @post = mock_model(Post)
-      @post.stub!(:update_attributes).and_return(false)
-      Post.stub!(:find).and_return(@post)
-    end
-
-    def do_put
-      request.env['RAW_POST_DATA'] = {}.to_yaml
-      request.headers['HTTP_X_ENKIHASH'] = hash_request(request)
-      put :update, :id => 1, :format => 'yaml'
-    end
-
-    it 'is unprocessable' do
-      do_put
-      response.headers['Status'].should == '422 Unprocessable Entity'
+      response.status.should == '422 Unprocessable Entity'
     end
   end
 
@@ -243,5 +165,23 @@ describe Admin::PostsController do
       do_delete
       response.should have_text(/#{Regexp.escape(@post.to_json)}/)
     end
+  end
+end
+
+describe Admin::PostsController, 'with an AJAX request to preview' do
+  before(:each) do
+    Post.should_receive(:build_for_preview).and_return(@post = mock_model(Post))
+    controller.should_receive(:render).with(:partial => 'posts/post.html.erb')
+    session[:logged_in] = true
+    xhr :post, :preview, :post => {
+      :title        => 'My Post',
+      :body         => 'body',
+      :tag_list     => 'ruby',
+      :published_at => 'now'
+    }
+  end
+
+  it "assigns a new post for the view" do
+    assigns(:post).should == @post
   end
 end

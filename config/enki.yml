@@ -1,13 +1,16 @@
+# Configuration options for your blog - customise to taste
+# This file contains no secret information, so can be stored in source control (unlike database.yml)
 title: Prabin Deka
 url:   http://www.prabindeka.com
 author: 
-  name:    
-  email:   pdeka@thoughtworks.com
-  open_id:
-    - http://enkiblog.com
-    - http://secondaryopenid.com
+  name:    Prabin Deka        # For copyright notice and ATOM feeds
+  email:   pdeka@thoughtworks.com # Exception emails will go here, and it is used in ATOM feeds
+  open_id:                  # These are used to login to the admin area
+      - http://enkiblog.com
+      - http://secondaryopenid.com
 
-# Delete the following section if your site will not be acting as an OpenID delegate
-#open_id_delegation:
-#  server:   http://www.myopenid.com/server
-#  delegate: http://username.myopenid.com
+# Delete the following section if your site will not be acting as an OpenID delegate (http://wiki.openid.net/Delegation)
+# If you're deploying with mongrel, make sure you read http://rhnh.net/2008/04/13/nginx-openid-delegation-and-yadis
+open_id_delegation:
+  server:   http://www.myopenid.com/server
+  delegate: http://username.myopenid.com

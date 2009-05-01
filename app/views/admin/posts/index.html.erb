@@ -23,10 +23,10 @@
   </tbody>  
 
   <tfoot>
-    <% if @posts.page_count > 1 -%>
+    <% if @posts.total_pages > 1 -%>
       <tr class="pagination">
         <td colspan="5">
-          <%= will_paginate(@posts, :prev_label => '« Newer', :next_label => 'Older »') %>
+          <%= will_paginate(@posts, :previous_label => '« Newer', :next_label => 'Older »') %>
         </td>  
       </tr>
     <% end -%>

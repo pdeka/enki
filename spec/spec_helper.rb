@@ -4,6 +4,7 @@ ENV["RAILS_ENV"] = "test"
 require File.expand_path(File.dirname(__FILE__) + "/../config/environment")
 require 'spec'
 require 'spec/rails'
+
 require File.expand_path(File.dirname(__FILE__) + "/be_valid_xhtml")
 
 Spec::Runner.configure do |config|
@@ -29,6 +30,10 @@ Spec::Runner.configure do |config|
   # If you declare global fixtures, be aware that they will be declared
   # for all of your examples, even those that don't use them.
   #
+  # You can also declare which fixtures to use (for example fixtures for test/fixtures):
+  #
+  # config.fixture_path = RAILS_ROOT + '/spec/fixtures/'
+  #
   # == Mock Framework
   #
   # RSpec uses it's own mocking framework by default. If you prefer to
@@ -37,10 +42,14 @@ Spec::Runner.configure do |config|
   # config.mock_with :mocha
   # config.mock_with :flexmock
   # config.mock_with :rr
+  #
+  # == Notes
+  # 
+  # For more information take a look at Spec::Example::Configuration and Spec::Runner
 end
 
 def hash_request(request)
-  Digest::SHA1.hexdigest(request.raw_post + Digest::SHA1.hexdigest(File.open("#{RAILS_ROOT}/config/database.yml").read + File.open("#{RAILS_ROOT}/config/enki.yml").read + RAILS_ENV))
+  Digest::SHA1.hexdigest(request.raw_post + Digest::SHA1.hexdigest(File.open('config/database.yml').read + File.open('config/enki.yml').read + RAILS_ENV))
 end
 
 describe "ATOM feed", :shared => true do

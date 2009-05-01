@@ -1,5 +1,6 @@
-.*.swp
-.*.swo
+log/**/*
+log
+tmp/**/*
 tmp
 /nbproject
 /vendor/rails/**/*.log

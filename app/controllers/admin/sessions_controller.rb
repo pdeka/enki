@@ -15,21 +15,14 @@ class Admin::SessionsController < ApplicationController
   def create
     return successful_login if allow_login_bypass? && params[:bypass_login]
     authenticate_with_open_id(params[:openid_url]) do |result, identity_url|
-      case result.status
-      when :missing
-        flash.now[:error] = "Sorry, the OpenID server couldn't be found"
-      when :canceled
-        flash.now[:error] = "OpenID verification was canceled"
-      when :failed
-        flash.now[:error] = "Sorry, the OpenID verification failed"
-      when :invalid
-        flash.now[:error] = "Sorry, the OpenID you entered was not a valid URL"
-      when :successful
+      if result.successful?
         if config.author_open_ids.include?(URI.parse(identity_url))
           return successful_login
         else
           flash.now[:error] = "You are not authorized"
         end
+      else
+        flash.now[:error] = result.message
       end
       render :action => 'new'
     end

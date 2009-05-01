@@ -3,21 +3,19 @@ class Post < ActiveRecord::Base
 
   acts_as_taggable
 
-  has_many :comments, :dependent => :destroy
-  has_many :approved_comments, :class_name => 'Comment'
+  has_many                :comments, :dependent => :destroy
+  has_many                :approved_comments, :class_name => 'Comment'
 
-  before_validation :generate_slug
-  before_validation :set_dates
-  before_save :apply_filter
+  before_validation       :generate_slug
+  before_validation       :set_dates
+  before_save             :apply_filter
 
-  validates_presence_of :title
-  validates_presence_of :slug
-  validates_presence_of :body
+  validates_presence_of   :title, :slug, :body
 
-  validate :validate_published_at_natural
+  validate                :validate_published_at_natural
 
   def validate_published_at_natural
-    errors.add("published_at_natural", "Unable to parse time") if published_at.nil?
+    errors.add("published_at_natural", "Unable to parse time") unless published?
   end
 
   attr_accessor :minor_edit
@@ -28,6 +26,10 @@ class Post < ActiveRecord::Base
   def minor_edit?
     self.minor_edit == "1"
   end
+  
+  def published?
+    published_at?
+  end
 
   attr_accessor :published_at_natural
   def published_at_natural
@@ -35,6 +37,17 @@ class Post < ActiveRecord::Base
   end
 
   class << self
+    def build_for_preview(params)
+      post = Post.new(params)
+      post.generate_slug
+      post.set_dates
+      post.apply_filter
+      TagList.from(params[:tag_list]).each do |tag|
+        post.tags << Tag.new(:name => tag)
+      end
+      post
+    end
+
     def find_recent(options = {})
       tag = options.delete(:tag)
       options = {
@@ -53,7 +66,9 @@ class Post < ActiveRecord::Base
       begin
         day = Time.parse([year, month, day].collect(&:to_i).join("-")).midnight
         post = find_all_by_slug(slug, options).detect do |post|
-          post.published_at.midnight == day
+          [:year, :month, :day].all? {|time|
+            post.published_at.send(time) == day.send(time)
+          }
         end 
       rescue ArgumentError # Invalid time
         post = nil

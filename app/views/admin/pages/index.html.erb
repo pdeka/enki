@@ -24,10 +24,10 @@
   </tbody>
 
   <tfoot>
-    <% if @pages.page_count > 1 -%>
+    <% if @pages.total_pages > 1 -%>
       <tr class="pagination">
         <td colspan='5'>
-          <%= will_paginate(@pages, :prev_label => '« Newer', :next_label => 'Older »') %>
+          <%= will_paginate(@pages, :previous_label => '« Newer', :next_label => 'Older »') %>
         </td>  
       </tr>  
     <% end -%>  

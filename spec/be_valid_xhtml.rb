@@ -41,7 +41,7 @@ class BeValidXhtml
   
   
   def matches?(response)
-    fn = response.rendered_file
+    fn = response.rendered.to_s
     fragment = response.body
     fragment = wrap_with_xhtml_header(fragment) if @fragment
     return true if validity_checks_disabled?
@@ -74,7 +74,7 @@ class BeValidXhtml
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html PUBLIC
     "-//W3C//DTD XHTML 1.1 plus MathML 2.0 plus SVG 1.1//EN"
-    "http://www.w3.org/2002/04/xhtml-math-svg/xhtml-math-svg.dtd">
+    "http://www.w3.org/2002/04/xhtml-math-svg/xhtml-math-svg-flat.dtd">
 
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>

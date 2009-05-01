@@ -22,24 +22,6 @@ describe Admin::PagesController do
     end
   end
 
-  describe 'handling GET to index, YAML request' do
-    before(:each) do
-      @pages = [mock_model(Page), mock_model(Page)]
-      @pages.each {|page| page.stub!(:to_serializable) }
-      Page.stub!(:find).and_return(@pages)
-      session[:logged_in] = true
-      get :index, :format => 'yaml'
-    end
-
-    it "is successful" do
-      response.should be_success
-    end
-
-    it "finds pages with out pagination" do
-      pending("Figure out how to test this")
-    end
-  end
-
   describe 'handling GET to show' do
     before(:each) do
       @page = mock_model(Page)
@@ -61,19 +43,6 @@ describe Admin::PagesController do
     end
   end
   
-  describe 'handling GET to show, YAML format' do
-    before(:each) do
-      @page = mock_model(Page)
-      Page.stub!(:find).and_return(@page)
-      session[:logged_in] = true
-      get :show, :id => 1, :format => 'yaml'
-    end
-
-    it "is successful" do
-      response.should be_success
-    end
-  end
-
   describe 'handling GET to new' do
     before(:each) do
       @page = mock_model(Page)
@@ -138,9 +107,10 @@ describe Admin::PagesController do
 
     it 'is unprocessable' do
       do_put
-      response.headers['Status'].should == '422 Unprocessable Entity'
+      response.status.should == '422 Unprocessable Entity'
     end
   end
+end
 
   describe 'handling PUT to update with valid attributes, YAML request' do
     before(:each) do
@@ -155,7 +125,7 @@ describe Admin::PagesController do
         'slug'  => 'my-post',
         'body'  => 'This is my post'
       }}.to_yaml
-      session[:logged_in] = true
+      request.headers['HTTP_X_ENKIHASH'] = hash_request(request)
       put :update, :id => 1, :format => 'yaml'
     end
 
@@ -175,22 +145,7 @@ describe Admin::PagesController do
     end
   end
 
-  describe 'handling PUT to update with invalid attributes, YAML request' do
-    before(:each) do
-      @page = mock_model(Page)
-      @page.stub!(:update_attributes).and_return(false)
-      Page.stub!(:find).and_return(@page)
-    end
-
-    def do_put
-      request.env['RAW_POST_DATA'] = {}.to_yaml
-      request.headers['HTTP_X_ENKIHASH'] = hash_request(request)
-      put :update, :id => 1, :format => 'yaml'
-    end
-
-    it 'is unprocessable' do
-      do_put
-      response.headers['Status'].should == '422 Unprocessable Entity'
-    end
+  it "assigns a new page for the view" do
+    assigns(:page).should == @page
   end
 end

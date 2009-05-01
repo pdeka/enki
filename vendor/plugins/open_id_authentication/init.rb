@@ -12,7 +12,7 @@ else
   end
 end
 
-# TODO: RSpec doesn't seem to execute config.to_prepare, find out what the deal is
-#config.to_prepare do
+config.to_prepare do
+  OpenID::Util.logger = Rails.logger
   ActionController::Base.send :include, OpenIdAuthentication
-#end
+end

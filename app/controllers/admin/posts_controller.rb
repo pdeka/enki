@@ -1,20 +1,13 @@
 class Admin::PostsController < Admin::BaseController
   before_filter :find_post, :only => [:show, :update, :destroy]
-  before_filter :translate_params, :only => [:create, :update]
 
   def index
     respond_to do |format|
       format.html {
         @posts = Post.paginate(
-          :order => "created_at DESC",
+          :order => "published_at DESC",
           :page  => params[:page]
         )
-      }
-      format.yaml {
-        render :yaml => Post.find(:all, 
-          :select => 'id, title',
-          :order  => 'created_at DESC'
-        ).to_yaml
       }
     end
   end
@@ -27,12 +20,10 @@ class Admin::PostsController < Admin::BaseController
           flash[:notice] = "Created post '#{@post.title}'"
           redirect_to(:action => 'show', :id => @post)
         }
-        format.yaml { head(200) }
       end
     else
       respond_to do |format|
         format.html { render :action => 'new',         :status => :unprocessable_entity }
-        format.yaml { render :yaml   => false.to_yaml, :status => :unprocessable_entity }
       end
     end
   end
@@ -44,12 +35,10 @@ class Admin::PostsController < Admin::BaseController
           flash[:notice] = "Updated post '#{@post.title}'"
           redirect_to(:action => 'show', :id => @post)
         }
-        format.yaml { head(200) }
       end
     else
       respond_to do |format|
         format.html { render :action => 'show',        :status => :unprocessable_entity }
-        format.yaml { render :yaml   => false.to_yaml, :status => :unprocessable_entity }
       end
     end
   end
@@ -59,14 +48,21 @@ class Admin::PostsController < Admin::BaseController
       format.html {
         render :partial => 'post', :locals => {:post => @post} if request.xhr?
       }
-      format.yaml {
-        render :yaml => @post.to_yaml(:attributes => [:title, :slug, :body, :tag_list, :created_at, :updated_at, :published_at])
-      }
     end
   end
 
   def new
     @post = Post.new
+  end
+  
+  def preview
+    @post = Post.build_for_preview(params[:post])
+
+    respond_to do |format|
+      format.js {
+        render :partial => 'posts/post.html.erb'
+      }
+    end
   end
 
   def destroy
