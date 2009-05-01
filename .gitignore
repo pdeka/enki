@@ -4,3 +4,5 @@ tmp/**/*
 tmp
 /nbproject
 /vendor/rails/**/*.log
+.idea/
+db/schema.rb

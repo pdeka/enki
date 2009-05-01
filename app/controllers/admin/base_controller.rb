@@ -5,8 +5,8 @@ class Admin::BaseController < ApplicationController
 
   protected
 
-  def salt
-    @@salt ||= Digest::SHA1.hexdigest("--#{Time.now.to_s}--" + File.open("#{RAILS_ROOT}/config/enki.yml").read + RAILS_ENV)
+  def require_login
+    return redirect_to(admin_session_path) unless session[:logged_in]
   end
 
   def set_content_type
